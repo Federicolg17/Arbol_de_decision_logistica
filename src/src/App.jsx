@@ -54,7 +54,10 @@ function calcVME(d) {
 }
 
 const cop = n => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(n);
-const fmt = n => { const a = Math.abs(n), s = n < 0 ? "-" : ""; return a >= 1e9 ? ⁠ ${s}$${(a/1e9).toFixed(2)}B ⁠ : a >= 1e6 ? ⁠ ${s}$${(a/1e6).toFixed(1)}M ⁠ : ⁠ ${s}$${(a/1e3).toFixed(0)}K ⁠; };
+const fmt = n => {
+  const a = Math.abs(n), s = n < 0 ? "-" : "";
+  return a >= 1e9 ? `${s}$${(a/1e9).toFixed(2)}B` : a >= 1e6 ? `${s}$${(a/1e6).toFixed(1)}M` : `${s}$${(a/1e3).toFixed(0)}K`;
+};
 
 export default function App() {
   const [sel, setSel] = useState("B");
@@ -93,7 +96,6 @@ export default function App() {
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 2px; }
       `}</style>
 
-      {/* HEADER */}
       <div style={{ background: "rgba(15,23,42,0.95)", borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "16px 24px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg,#3B82F6,#8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>🎨</div>
@@ -113,7 +115,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* TABS */}
       <div style={{ padding: "0 24px", background: "rgba(15,23,42,0.6)", borderBottom: "1px solid rgba(255,255,255,0.05)", display: "flex", gap: 4 }}>
         {[["arbol","🌳 Árbol"],["comparativa","📊 Comparativa"],["supuestos","📋 Supuestos"]].map(([id, lbl]) => (
           <button key={id} className="tab-btn" onClick={() => setTab(id)} style={{
@@ -126,11 +127,8 @@ export default function App() {
 
       <div style={{ padding: "24px", maxWidth: 1000, margin: "0 auto" }}>
 
-        {/* ===== ÁRBOL ===== */}
         {tab === "arbol" && (
-          <div className={⁠ fade-in ${mounted ? "show" : ""} ⁠}>
-
-            {/* Selector de opciones */}
+          <div className={`fade-in ${mounted ? "show" : ""}`}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 20 }}>
               {DECISIONS.map((d, i) => {
                 const r = results[i];
@@ -138,10 +136,10 @@ export default function App() {
                 const isBest = d.id === bestId;
                 return (
                   <div key={d.id} className="card-hover" onClick={() => setSel(d.id)} style={{
-                    background: isSel ? ⁠ linear-gradient(135deg, ${d.color}22, ${d.color}11) ⁠ : "rgba(30,41,59,0.8)",
-                    border: ⁠ 2px solid ${isSel ? d.color : "rgba(255,255,255,0.06)"} ⁠,
+                    background: isSel ? `linear-gradient(135deg, ${d.color}22, ${d.color}11)` : "rgba(30,41,59,0.8)",
+                    border: `2px solid ${isSel ? d.color : "rgba(255,255,255,0.06)"}`,
                     borderRadius: 14, padding: "16px",
-                    boxShadow: isSel ? ⁠ 0 0 24px ${d.color}33, inset 0 1px 0 ${d.color}44 ⁠ : "none",
+                    boxShadow: isSel ? `0 0 24px ${d.color}33, inset 0 1px 0 ${d.color}44` : "none",
                     position: "relative", overflow: "hidden"
                   }}>
                     {isBest && <div style={{ position: "absolute", top: 10, right: 10, background: "#10B981", color: "#fff", fontSize: 9, fontWeight: 700, padding: "3px 7px", borderRadius: 20, letterSpacing: 0.5 }}>★ ÓPTIMO</div>}
@@ -157,7 +155,6 @@ export default function App() {
               })}
             </div>
 
-            {/* DIAGRAMA SVG */}
             <div style={{ background: "rgba(15,23,42,0.9)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "20px 16px", marginBottom: 20, overflowX: "auto" }}>
               <div style={{ fontSize: 10, color: "#475569", textTransform: "uppercase", letterSpacing: 1, marginBottom: 14, fontFamily: "'DM Mono', monospace" }}>
                 Diagrama — Selecciona una alternativa arriba
@@ -165,7 +162,7 @@ export default function App() {
               <svg viewBox="0 0 760 360" style={{ width: "100%", minWidth: 580, overflow: "visible" }}>
                 <defs>
                   {DECISIONS.map(d => (
-                    <marker key={d.id} id={⁠ mk-${d.id} ⁠} markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                    <marker key={d.id} id={`mk-${d.id}`} markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
                       <path d="M0,0 L8,4 L0,8 Z" fill={sel === d.id ? d.color : "#1E293B"} />
                     </marker>
                   ))}
@@ -175,7 +172,6 @@ export default function App() {
                   </filter>
                 </defs>
 
-                {/* Nodo raíz */}
                 <rect x={14} y={150} width={60} height={60} rx={8} fill="#1E293B" stroke="#3B82F6" strokeWidth={2} />
                 <text x={44} y={174} textAnchor="middle" fill="#94A3B8" fontSize={8} fontFamily="DM Sans">NODO</text>
                 <text x={44} y={186} textAnchor="middle" fill="#CBD5E1" fontSize={8} fontWeight="bold" fontFamily="DM Sans">DECISIÓN</text>
@@ -189,14 +185,11 @@ export default function App() {
 
                   return (
                     <g key={d.id} style={{ cursor: "pointer" }} onClick={() => setSel(d.id)}>
-                      {/* Línea raíz → decisión */}
                       <line x1={74} y1={180} x2={178} y2={decY}
                         stroke={isSel ? d.color : "#1E293B"} strokeWidth={isSel ? 2.5 : 1}
                         strokeDasharray={isSel ? "none" : "4,4"}
-                        markerEnd={⁠ url(#mk-${d.id}) ⁠}
+                        markerEnd={`url(#mk-${d.id})`}
                       />
-
-                      {/* Nodo decisión */}
                       <rect x={180} y={decY - 22} width={76} height={44} rx={8}
                         fill={isSel ? d.color : "#1E293B"}
                         stroke={isSel ? d.color : "#334155"} strokeWidth={isSel ? 2 : 1}
@@ -205,10 +198,8 @@ export default function App() {
                       <text x={218} y={decY - 7} textAnchor="middle" fill="#fff" fontSize={8} fontWeight="bold" fontFamily="DM Sans">{d.shortLabel.split(" ").slice(0,2).join(" ")}</text>
                       <text x={218} y={decY + 6} textAnchor="middle" fill={isSel ? "rgba(255,255,255,0.9)" : "#64748B"} fontSize={7.5} fontFamily="DM Mono">{fmt(r.vme)}</text>
                       {d.id === bestId && <text x={218} y={decY - 28} textAnchor="middle" fill="#10B981" fontSize={8} fontWeight="bold" fontFamily="DM Sans">★ ÓPTIMO</text>}
-                      {/* Tag */}
                       <text x={218} y={decY + 17} textAnchor="middle" fill={isSel ? "rgba(255,255,255,0.6)" : "#1E293B"} fontSize={7} fontFamily="DM Mono">{d.tag}</text>
 
-                      {/* Escenarios */}
                       {r.det.map((s, si) => {
                         const cy = decY + offsets[si];
                         return (
@@ -217,8 +208,6 @@ export default function App() {
                               stroke={isSel ? d.color + "88" : "#0F172A"} strokeWidth={isSel ? 1.5 : 1} />
                             <text x={(256+370)/2} y={(decY+cy)/2 - 5} textAnchor="middle"
                               fill={isSel ? d.color + "cc" : "#0F172A"} fontSize={7.5} fontFamily="DM Mono">p={s.prob}</text>
-
-                            {/* Nodo azar */}
                             <circle cx={382} cy={cy} r={13}
                               fill={isSel ? d.color + "33" : "#0F172A"}
                               stroke={isSel ? d.color : "#1E293B"} strokeWidth={isSel ? 2 : 1} />
@@ -226,11 +215,8 @@ export default function App() {
                               fill={isSel ? d.color : "#334155"} fontSize={7} fontWeight="bold" fontFamily="DM Sans">
                               {s.label.replace("Demanda ","").toUpperCase().slice(0,4)}
                             </text>
-
                             <line x1={395} y1={cy} x2={455} y2={cy}
                               stroke={isSel ? d.color + "66" : "#0F172A"} strokeWidth={isSel ? 1.5 : 1} />
-
-                            {/* Terminal */}
                             <rect x={455} y={cy - 16} width={290} height={32} rx={6}
                               fill={isSel ? d.color + "18" : "#0A1122"}
                               stroke={isSel ? d.color + "44" : "#0F172A"} strokeWidth={1} />
@@ -247,8 +233,7 @@ export default function App() {
               </svg>
             </div>
 
-            {/* PANEL DETALLE */}
-            <div style={{ background: ⁠ linear-gradient(135deg, ${selD.color}0d, rgba(15,23,42,0.95)) ⁠, border: ⁠ 1px solid ${selD.color}44 ⁠, borderRadius: 16, padding: 20 }}>
+            <div style={{ background: `linear-gradient(135deg, ${selD.color}0d, rgba(15,23,42,0.95))`, border: `1px solid ${selD.color}44`, borderRadius: 16, padding: 20 }}>
               <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 18 }}>
                 <span style={{ fontSize: 32 }}>{selD.icon}</span>
                 <div style={{ flex: 1 }}>
@@ -256,8 +241,6 @@ export default function App() {
                   <div style={{ color: "#64748B", fontSize: 12, marginTop: 3 }}>{selD.desc}</div>
                 </div>
               </div>
-
-              {/* Costos */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 18 }}>
                 {[["Inversión Inicial", cop(selD.costoInicial)], ["Costo Op/mes", cop(selD.costoOperacional)], ["Costo Total 12m", cop(selR.costoTotal)]].map(([l,v]) => (
                   <div key={l} style={{ background: "rgba(15,23,42,0.7)", borderRadius: 10, padding: "12px 14px", border: "1px solid rgba(255,255,255,0.05)" }}>
@@ -266,22 +249,18 @@ export default function App() {
                   </div>
                 ))}
               </div>
-
-              {/* Desglose */}
               <div style={{ marginBottom: 18 }}>
                 <div style={{ color: "#475569", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, fontFamily: "'DM Mono', monospace" }}>Desglose costo operacional mensual</div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                   {selD.desglose.map(item => (
-                    <span key={item} style={{ background: ⁠ ${selD.color}18 ⁠, border: ⁠ 1px solid ${selD.color}33 ⁠, color: "#CBD5E1", fontSize: 11, padding: "4px 10px", borderRadius: 20 }}>{item}</span>
+                    <span key={item} style={{ background: `${selD.color}18`, border: `1px solid ${selD.color}33`, color: "#CBD5E1", fontSize: 11, padding: "4px 10px", borderRadius: 20 }}>{item}</span>
                   ))}
                 </div>
               </div>
-
-              {/* Escenarios */}
               <div style={{ color: "#475569", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10, fontFamily: "'DM Mono', monospace" }}>Nodos de azar — Escenarios de demanda</div>
               {selR.det.map((s, i) => (
-                <div key={i} className="scenario-row" style={{ background: "rgba(15,23,42,0.5)", border: ⁠ 1px solid ${selD.color}22 ⁠, borderRadius: 10, padding: "12px 16px", marginBottom: 8, display: "flex", alignItems: "center", gap: 16 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 8, background: ⁠ ${selD.color}22 ⁠, border: ⁠ 2px solid ${selD.color}55 ⁠, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <div key={i} className="scenario-row" style={{ background: "rgba(15,23,42,0.5)", border: `1px solid ${selD.color}22`, borderRadius: 10, padding: "12px 16px", marginBottom: 8, display: "flex", alignItems: "center", gap: 16 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 8, background: `${selD.color}22`, border: `2px solid ${selD.color}55`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <span style={{ color: selD.color, fontWeight: 800, fontSize: 13, fontFamily: "'DM Mono', monospace" }}>{(s.prob*100).toFixed(0)}%</span>
                   </div>
                   <div style={{ flex: 1 }}>
@@ -294,9 +273,7 @@ export default function App() {
                   </div>
                 </div>
               ))}
-
-              {/* VME box */}
-              <div style={{ background: ⁠ ${selD.color}18 ⁠, border: ⁠ 2px solid ${selD.color}55 ⁠, borderRadius: 12, padding: "14px 18px", marginTop: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ background: `${selD.color}18`, border: `2px solid ${selD.color}55`, borderRadius: 12, padding: "14px 18px", marginTop: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <div style={{ color: "#94A3B8", fontSize: 12, fontWeight: 600 }}>Valor Monetario Esperado (VME)</div>
                   <div style={{ color: "#64748B", fontSize: 10, marginTop: 2, fontFamily: "'DM Mono', monospace" }}>Σ (prob × utilidad neta) — 12 meses</div>
@@ -307,19 +284,18 @@ export default function App() {
           </div>
         )}
 
-        {/* ===== COMPARATIVA ===== */}
         {tab === "comparativa" && (
-          <div className={⁠ fade-in ${mounted ? "show" : ""} ⁠}>
+          <div className={`fade-in ${mounted ? "show" : ""}`}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14, marginBottom: 20 }}>
               {DECISIONS.map((d, i) => {
                 const r = results[i];
                 const isBest = d.id === bestId;
                 return (
                   <div key={d.id} style={{
-                    background: isBest ? ⁠ linear-gradient(160deg, ${d.color}22, ${d.color}08) ⁠ : "rgba(15,23,42,0.8)",
-                    border: ⁠ 2px solid ${isBest ? d.color : "rgba(255,255,255,0.06)"} ⁠,
+                    background: isBest ? `linear-gradient(160deg, ${d.color}22, ${d.color}08)` : "rgba(15,23,42,0.8)",
+                    border: `2px solid ${isBest ? d.color : "rgba(255,255,255,0.06)"}`,
                     borderRadius: 16, padding: 20,
-                    boxShadow: isBest ? ⁠ 0 8px 32px ${d.color}22 ⁠ : "none"
+                    boxShadow: isBest ? `0 8px 32px ${d.color}22` : "none"
                   }}>
                     {isBest && <div style={{ background: "#10B981", color: "#fff", fontSize: 9, fontWeight: 800, padding: "3px 8px", borderRadius: 20, display: "inline-block", marginBottom: 10, letterSpacing: 0.5 }}>★ RECOMENDADA</div>}
                     <div style={{ fontSize: 30, marginBottom: 8 }}>{d.icon}</div>
@@ -338,8 +314,6 @@ export default function App() {
                 );
               })}
             </div>
-
-            {/* Barras */}
             <div style={{ background: "rgba(15,23,42,0.9)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: 24 }}>
               <div style={{ color: "#64748B", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 20, fontFamily: "'DM Mono', monospace" }}>Comparativa Visual VME</div>
               {DECISIONS.map((d, i) => {
@@ -354,8 +328,8 @@ export default function App() {
                     </div>
                     <div style={{ height: 16, background: "#1E293B", borderRadius: 8, overflow: "hidden" }}>
                       <div style={{
-                        height: "100%", width: ⁠ ${pct}% ⁠,
-                        background: ⁠ linear-gradient(90deg, ${d.color}88, ${d.color}) ⁠,
+                        height: "100%", width: `${pct}%`,
+                        background: `linear-gradient(90deg, ${d.color}88, ${d.color})`,
                         borderRadius: 8, transition: "width 0.8s ease"
                       }} />
                     </div>
@@ -366,13 +340,11 @@ export default function App() {
           </div>
         )}
 
-        {/* ===== SUPUESTOS ===== */}
         {tab === "supuestos" && (
-          <div className={⁠ fade-in ${mounted ? "show" : ""} ⁠}>
+          <div className={`fade-in ${mounted ? "show" : ""}`}>
             <div style={{ background: "rgba(15,23,42,0.9)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: 24 }}>
               <div style={{ color: "#F1F5F9", fontWeight: 700, fontSize: 16, marginBottom: 6 }}>📋 Supuestos y Justificación</div>
               <div style={{ color: "#64748B", fontSize: 12, marginBottom: 20 }}>Todos los valores en pesos colombianos (COP). Horizonte de análisis: 12 meses.</div>
-
               <div style={{ background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 10, padding: "12px 16px", marginBottom: 20 }}>
                 <div style={{ color: "#93C5FD", fontWeight: 700, fontSize: 13, marginBottom: 6 }}>Fórmulas base</div>
                 <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#CBD5E1", lineHeight: 1.8 }}>
@@ -381,12 +353,11 @@ export default function App() {
                   <div style={{ color: "#64748B", fontSize: 11, marginTop: 4 }}>Salario base empleados: <strong style={{ color: "#34D399" }}>$2.000.000 COP/mes</strong></div>
                 </div>
               </div>
-
               {DECISIONS.map((d, di) => (
                 <div key={d.id} style={{ marginBottom: 24, paddingBottom: 24, borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                   <div style={{ color: d.color, fontWeight: 700, fontSize: 14, marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
                     <span style={{ fontSize: 20 }}>{d.icon}</span> {d.shortLabel}
-                    <span style={{ background: ⁠ ${d.color}22 ⁠, border: ⁠ 1px solid ${d.color}44 ⁠, color: d.color, fontSize: 9, padding: "2px 8px", borderRadius: 20, fontFamily: "'DM Mono', monospace" }}>{d.tag}</span>
+                    <span style={{ background: `${d.color}22`, border: `1px solid ${d.color}44`, color: d.color, fontSize: 9, padding: "2px 8px", borderRadius: 20, fontFamily: "'DM Mono', monospace" }}>{d.tag}</span>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
                     <div style={{ background: "rgba(15,23,42,0.7)", borderRadius: 10, padding: "12px 14px", border: "1px solid rgba(255,255,255,0.04)" }}>
@@ -399,15 +370,13 @@ export default function App() {
                     <div style={{ background: "rgba(15,23,42,0.7)", borderRadius: 10, padding: "12px 14px", border: "1px solid rgba(255,255,255,0.04)" }}>
                       <div style={{ color: "#475569", fontSize: 10, marginBottom: 6, fontFamily: "'DM Mono', monospace" }}>COSTO OPERACIONAL/MES</div>
                       <div style={{ color: "#E2E8F0", fontWeight: 700, fontSize: 14, marginBottom: 4, fontFamily: "'DM Mono', monospace" }}>{cop(d.costoOperacional)}</div>
-                      <div style={{ color: "#64748B", fontSize: 11 }}>
-                        {d.desglose.join(" + ")}
-                      </div>
+                      <div style={{ color: "#64748B", fontSize: 11 }}>{d.desglose.join(" + ")}</div>
                     </div>
                   </div>
                   <div style={{ color: "#475569", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, fontFamily: "'DM Mono', monospace" }}>Escenarios de demanda</div>
                   {d.scenarios.map((s, si) => (
                     <div key={si} style={{ display: "flex", gap: 10, marginBottom: 6, alignItems: "flex-start" }}>
-                      <div style={{ width: 28, height: 28, borderRadius: 6, background: ⁠ ${d.color}22 ⁠, border: ⁠ 1px solid ${d.color}44 ⁠, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 6, background: `${d.color}22`, border: `1px solid ${d.color}44`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
                         <span style={{ color: d.color, fontSize: 10, fontWeight: 700, fontFamily: "'DM Mono', monospace" }}>{(s.prob*100).toFixed(0)}%</span>
                       </div>
                       <div>
@@ -419,7 +388,6 @@ export default function App() {
                   ))}
                 </div>
               ))}
-
               <div style={{ background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 10, padding: "12px 16px" }}>
                 <div style={{ color: "#FCD34D", fontWeight: 700, fontSize: 12, marginBottom: 4 }}>⚠️ Nota metodológica</div>
                 <div style={{ color: "#94A3B8", fontSize: 11, lineHeight: 1.7 }}>
